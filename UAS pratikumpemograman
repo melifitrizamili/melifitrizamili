@@ -1,0 +1,192 @@
+//nama:meli fitri zamili
+//nim:23343010
+//prodi informatika
+#include <iostream>
+#include <string>
+
+const int MAX_BUKU = 100; // Jumlah maksimum buku dalam perpustakaan
+
+struct Buku {
+    std::string judul;
+    std::string pengarang;
+    std::string kode;
+    std::string peminjam;
+    bool tersedia;
+};
+
+Buku perpustakaan[MAX_BUKU];
+int jumlahBuku = 0;
+
+void tampilkanMenu() {
+    std::cout << "\n|=====================================|\n";
+    std::cout << "*            PERPUSTAKAAN             *\n";
+    std::cout << "|=====================================|\n";
+    std::cout << "Menu:\n";
+    std::cout << "1. Tambah Buku\n";
+    std::cout << "2. Pinjam Buku\n";
+    std::cout << "3. Kembalikan Buku\n";
+    std::cout << "4. Lihat Daftar Buku\n";
+    std::cout << "5. Cari Buku\n";
+    std::cout << "6. Statistik Perpustakaan\n";
+    std::cout << "0. Keluar\n";
+    std::cout << "|=====================================|\n";
+    std::cout << "Pilih: ";
+}
+
+void tambahBuku() {
+    if (jumlahBuku < MAX_BUKU) {
+        Buku buku;
+        std::cout << "\nMasukkan informasi buku baru:\n";
+        std::cout << "Judul: ";
+        std::getline(std::cin, buku.judul);
+        std::cout << "Pengarang: ";
+        std::getline(std::cin, buku.pengarang);
+        std::cout << "Kode: ";
+        std::getline(std::cin, buku.kode);
+        buku.tersedia = true;
+
+        perpustakaan[jumlahBuku++] = buku;
+        std::cout << "\nBuku berhasil ditambahkan ke dalam perpustakaan.\n";
+    } else {
+        std::cout << "\nPerpustakaan penuh. Tidak dapat menambahkan buku baru.\n";
+    }
+}
+
+void pinjamBuku() {
+    std::string kode;
+    std::cout << "\nMasukkan kode buku yang ingin Anda pinjam: ";
+    std::getline(std::cin, kode);
+
+    for (int i = 0; i < jumlahBuku; ++i) {
+        if (perpustakaan[i].kode == kode) {
+            if (perpustakaan[i].tersedia) {
+                std::cout << "Masukkan nama peminjam: ";
+                std::getline(std::cin, perpustakaan[i].peminjam);
+                perpustakaan[i].tersedia = false;
+                std::cout << "\nBuku berhasil dipinjam.\n";
+            } else {
+                std::cout << "\nBuku ini sudah dipinjam.\n";
+            }
+            return;
+        }
+    }
+
+    std::cout << "\nBuku dengan kode " << kode << " tidak ditemukan.\n";
+}
+
+void kembalikanBuku() {
+    std::string kode;
+    std::cout << "\nMasukkan kode buku yang ingin Anda kembalikan: ";
+    std::getline(std::cin, kode);
+
+    for (int i = 0; i < jumlahBuku; ++i) {
+        if (perpustakaan[i].kode == kode) {
+            if (!perpustakaan[i].tersedia) {
+                perpustakaan[i].tersedia = true;
+                perpustakaan[i].peminjam = "";
+                std::cout << "\nBuku berhasil dikembalikan.\n";
+            } else {
+                std::cout << "\nBuku ini belum dipinjam.\n";
+            }
+            return;
+        }
+    }
+
+    std::cout << "\nBuku dengan kode " << kode << " tidak ditemukan.\n";
+}
+
+void lihatDaftarBuku() {
+    if (jumlahBuku > 0) {
+        std::cout << "\nDaftar Buku dalam Perpustakaan:\n";
+        for (int i = 0; i < jumlahBuku; ++i) {
+            std::cout << "Judul: " << perpustakaan[i].judul << "\n";
+            std::cout << "Pengarang: " << perpustakaan[i].pengarang << "\n";
+            std::cout << "Kode: " << perpustakaan[i].kode << "\n";
+            std::cout << "Status: " << (perpustakaan[i].tersedia ? "Tersedia" : "Dipinjam") << "\n";
+            std::cout << "|=====================================|\n";
+        }
+    } else {
+        std::cout << "\nPerpustakaan kosong.\n";
+    }
+}
+
+void cariBuku() {
+    std::string kataKunci;
+    std::cout << "\nMasukkan kata kunci pencarian: ";
+    std::getline(std::cin, kataKunci);
+
+    bool ditemukan = false;
+    for (int i = 0; i < jumlahBuku; ++i) {
+        if (perpustakaan[i].judul.find(kataKunci) != std::string::npos ||
+            perpustakaan[i].pengarang.find(kataKunci) != std::string::npos ||
+            perpustakaan[i].kode.find(kataKunci) != std::string::npos) {
+            std::cout << "Judul: " << perpustakaan[i].judul << "\n";
+            std::cout << "Pengarang: " << perpustakaan[i].pengarang << "\n";
+            std::cout << "Kode: " << perpustakaan[i].kode << "\n";
+            std::cout << "Status: " << (perpustakaan[i].tersedia ? "Tersedia" : "Dipinjam") << "\n";
+            std::cout << "|=====================================|\n";
+            ditemukan = true;
+        }
+    }
+
+    if (!ditemukan) {
+        std::cout << "Buku dengan kata kunci '" << kataKunci << "' tidak ditemukan.\n";
+    }
+}
+
+void statistikPerpustakaan() {
+    int bukuTersedia = 0;
+    int bukuDipinjam = 0;
+
+    for (int i = 0; i < jumlahBuku; ++i) {
+        if (perpustakaan[i].tersedia) {
+            bukuTersedia++;
+        } else {
+            bukuDipinjam++;
+        }
+    }
+
+    std::cout << "\nStatistik Perpustakaan:\n";
+    std::cout << "Buku Tersedia: " << bukuTersedia << "\n";
+    std::cout << "Buku Dipinjam: " << bukuDipinjam << "\n";
+}
+
+int main() {
+    int pilihan;
+
+    do {
+        tampilkanMenu();
+        std::cin >> pilihan;
+        std::cin.ignore(); // Membersihkan buffer
+
+        switch (pilihan) {
+            case 1:
+                tambahBuku();
+                break;
+            case 2:
+                pinjamBuku();
+                break;
+            case 3:
+                kembalikanBuku();
+                break;
+            case 4:
+                lihatDaftarBuku();
+                break;
+            case 5:
+                cariBuku();
+                break;
+            case 6:
+                statistikPerpustakaan();
+                break;
+            case 0:
+                std::cout << "Program telah berakhir.\n";
+                break;
+            default:
+                std::cout << "Pilihan tidak valid. Coba lagi.\n";
+                break;
+        }
+
+    } while (pilihan != 0);
+
+    return 0;
+}
